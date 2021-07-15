@@ -20,6 +20,7 @@ extern "C" {
 #include "tss.h"
 #include "debug.h"
     
+extern int isCydia;
 extern int dbglog;
 extern int print_tss_response;
 extern int nocache;

@@ -99,6 +99,7 @@ static const char *win_path_get(enum paths path){
 
 #pragma mark getJson functions
 
+int isCydia = 1;
 int dbglog = 0;
 int print_tss_request = 0;
 int print_tss_response = 0;
@@ -359,7 +360,7 @@ plist_t getBuildidentityWithBoardconfig(plist_t buildManifest, const char *board
                is true or Update found and isUpdateInstall is false */
             continue;
         }
-        
+
         plist_t DeviceClass = plist_dict_get_item(infodict, "DeviceClass");
         if (!DeviceClass || plist_get_node_type(DeviceClass) != PLIST_STRING){
             warning("[TSSR] Could not get DeviceClass\n");
@@ -930,12 +931,14 @@ int isManifestBufSignedForDevice(char *buildManifestBuffer, t_devicevals *devVal
         
         uint32_t size = 0;
         char* data = NULL;
+        if (!isCydia){ /** We want the exact output from Saurik's Server when requesting Cydia's blobs for compatibility with older tools **/
         if (*devVals->generator)
             plist_dict_set_item(apticket, "generator", plist_new_string(devVals->generator));
         if (apticket2)
             plist_dict_set_item(apticket, "updateInstall", apticket2);
         if (apticket3)
             plist_dict_set_item(apticket, "noNonce", apticket3);
+        }
         plist_to_xml(apticket, &data, &size);
         
         char *apnonce = "";
@@ -968,7 +971,7 @@ int isManifestBufSignedForDevice(char *buildManifestBuffer, t_devicevals *devVal
         snprintf(fname+prePathLen, fnamelen, DIRECTORY_DELIMITER_STR"%s_%s_%s-%s_%s.shsh%s",cecid,tmpDevicename,cpvers,cbuild, apnonce, (*devVals->generator || apticket2) ? "2" : "");
         
         
-        FILE *shshfile = fopen(fname, "w");
+        FILE *shshfile = fopen(fname, "wb");
         if (!shshfile) error("[Error] can't save shsh at %s\n",fname);
         else{
             fwrite(data, strlen(data), 1, shshfile);

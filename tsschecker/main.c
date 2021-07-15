@@ -241,6 +241,7 @@ int main(int argc, const char * argv[]) {
                 break;
             case 'c': // long option: "cydia"; can be called as short option
                 serverUrl = "http://cydia.saurik.com/TSS/controller?action=2/";
+                isCydia = 1;
                 break;
             case 'o': // long option: "ota"; can be called as short option
                 versVals.isOta = 1;
